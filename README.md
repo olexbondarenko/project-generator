@@ -1,4 +1,4 @@
-# Instalation 
+# Installation 
 1. Open the `project-generator` directory in your terminal and type `npm install`;
 2. Then open the `client` directory in your terminal and type `npm install`.
 
