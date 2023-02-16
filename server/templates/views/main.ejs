@@ -1,0 +1,54 @@
+<template>
+    <div class="<%= className %>">
+        <main class="<%= className %>__main"></main>
+    </div>
+</template>
+
+<script>
+    import {
+        defineComponent, onMounted, onBeforeUnmount, inject,
+    } from '@nuxtjs/composition-api';
+
+    import AOS from 'aos';
+    import 'aos/dist/aos.css';
+
+    import {usePromoId} from 'composables/usePromoId';
+    import {modalsList} from 'components/promotions/<%= globalFolderName %>/constants/modalsList';
+
+    export default defineComponent({
+        name: '<%= componentName %>',
+        components: {},
+        setup() {
+            const globalStore = inject('globalStore');
+            const globalGetters = globalStore.getters;
+            const isUserAuthorized = globalGetters.isUserAuth;
+            const MY_PROMO_ID = '<%= globalFolderName %>';
+            const {setPromoId} = usePromoId();
+
+            setPromoId(MY_PROMO_ID);
+
+            onMounted(() => {
+                globalStore.mutations.setModalsList(modalsList);
+                <% if (useBanner) { %>globalStore.mutations.setHasBanner(true);<% } %>
+
+                AOS.init({
+                    once: true,
+                    disable: 'mobile',
+                });
+            });
+
+            onBeforeUnmount(() => {
+                globalStore.mutations.setModalsList([]);
+                <% if (useBanner) { %>globalStore.mutations.setHasBanner(false);<% } %>
+            });
+
+            return {
+                isUserAuthorized,
+            };
+        },
+    });
+</script>
+
+<style scoped lang="scss">
+@import 'components/promotions/<%= globalFolderName %>/styles/component';
+</style>

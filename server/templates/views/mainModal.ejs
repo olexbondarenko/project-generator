@@ -1,0 +1,25 @@
+<template>
+    <div class="<%= className %>">
+        <button
+            @click="$emit('close')"
+            type="button"
+            class="<%= className %>__close"
+            title="Закрыть модальное окно"
+        ></button>
+        <div class="<%= className %>__content">
+            <slot></slot>
+        </div>
+    </div>
+</template>
+
+<script>
+    import {defineComponent} from '@nuxtjs/composition-api';
+
+    export default defineComponent({
+        name: '<%= componentName %>',
+    });
+</script>
+
+<style scoped lang="scss">
+@import 'components/promotions/<%= globalFolderName %>/components/styles/<%= folderName %>/component';
+</style>

@@ -1,0 +1,22 @@
+<template>
+    <section class="<%= className %>">
+    </section>
+</template>
+
+<script>
+    import {defineComponent} from '@nuxtjs/composition-api';
+
+    export default defineComponent({
+        name: '<%= componentName %>',
+        components: {
+        },
+        setup() {
+            return {
+            };
+        },
+    });
+</script>
+
+<style scoped lang="scss">
+@import 'components/promotions/<%= globalFolderName %>/components/styles/<%= folderName %>/component';
+</style>

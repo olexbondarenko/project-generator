@@ -1,0 +1,26 @@
+<template>
+    <<%= parentComponentName %>
+        @close="$emit('close')"
+        class="<%= className %>"
+    >
+    </<%= parentComponentName %>>
+</template>
+
+<script>
+    import {defineComponent} from '@nuxtjs/composition-api';
+    import <%= parentComponentName %> from 'components/promotions/<%= globalFolderName %>/components/<%= parentComponentName %>';
+
+    export default defineComponent({
+        name: '<%= componentName %>',
+        components: {
+            <%= parentComponentName %>,
+        },
+        setup(props, {emit}) {
+            return {};
+        },
+    });
+</script>
+
+<style scoped lang="scss">
+@import 'components/promotions/<%= globalFolderName %>/components/modals/styles/<%= folderName %>/component';
+</style>
