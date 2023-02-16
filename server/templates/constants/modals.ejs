@@ -1,0 +1,12 @@
+<% for(let i=0; i < modals.length; i++) { -%>
+import <%= modals[i].componentName %> from 'components/promotions/<%= modals[i].globalFolderName %>/components/modals/<%= modals[i].componentName %>';
+<% } -%>
+
+export const modalsList = [
+<% for(let i=0; i < modals.length; i++) { -%>
+    {
+        name: '<%= modals[i].labelName %>',
+        component: <%= modals[i].componentName %>,
+    },
+<% } -%>
+];

@@ -2,7 +2,7 @@
   <form ref="form" class="form">
     <input
       type="text"
-      name="global-name"
+      v-model="globalName"
       placeholder="Project name"
       autocomplete="off"
       class="form__field form-field"
@@ -16,8 +16,7 @@
           <input
             id="use-banner"
             type="checkbox"
-            name="use-banner"
-            checked="false"
+            :checked="isUseBanner"
             class="form-fieldset-group-item__checkbox form-checkbox"
           />
           <label for="use-banner" class="form-fieldset-group-item__label">
@@ -30,9 +29,12 @@
     <fieldset class="form__fieldset form-fieldset">
       <legend class="form-fieldset__title">Project Components</legend>
 
-      <div class="form-fieldset__fields form-fieldset-fields">
+      <div
+        v-if="components.length > 0"
+        class="form-fieldset__fields form-fieldset-fields"
+      >
         <div
-          v-for="(group, groupIdx) in componentFields"
+          v-for="(group, groupIdx) in components"
           :key="`form-fieldset-fields__group-${groupIdx}`"
           class="form-fieldset-fields__group"
         >
@@ -43,7 +45,6 @@
             <input
               v-model="group.field.value"
               type="text"
-              name="components[]"
               placeholder="Component Name"
               autocomplete="off"
               class="form-field"
@@ -60,7 +61,6 @@
               <input
                 @click="updateCheckboxes(group.options, optionsIdx)"
                 type="checkbox"
-                name="templates[]"
                 v-model="option.checked"
                 :value="option.value"
                 :id="`form-checkbox-${groupIdx}-${optionsIdx}`"
@@ -92,42 +92,36 @@ export default {
   name: "GenerationForm",
   setup() {
     const axios = inject("axios");
-    const form = ref();
-    const componentFields = ref([]);
-    const componentFieldOptions = [
+    const globalName = ref("");
+    const isUseBanner = ref(false);
+    const components = ref([]);
+    const componentOptions = [
       {
-        value: "default",
-        name: "templates[]",
+        template: "default",
         label: "Default Template",
         checked: true,
       },
       {
-        value: "button",
-        name: "",
+        template: "button",
         label: "Button Template",
         checked: false,
       },
       {
-        value: "mainModal",
-        name: "templates[]",
+        template: "mainModal",
         label: "Main Modal Template",
         checked: false,
       },
       {
-        value: "defaultModal",
-        name: "templates[]",
+        template: "defaultModal",
         label: "Default Modal Template",
         checked: false,
       },
     ];
 
     const addComponentField = () => {
-      componentFields.value.push({
-        field: {
-          name: "components[]",
-          value: "",
-        },
-        options: JSON.parse(JSON.stringify([...componentFieldOptions])),
+      components.value.push({
+        field: { value: "" },
+        options: JSON.parse(JSON.stringify([...componentOptions])),
       });
     };
 
@@ -140,30 +134,25 @@ export default {
     };
 
     const generateProject = async () => {
-      const formData = new FormData(unref(form));
       const data = {
-        globalName: formData.get("global-name"),
-        useBanner: formData.get("use-banner"),
-        components: formData.getAll("components[]"),
-        templates: formData.getAll("templates[]"),
+        globalName: unref(globalName),
+        useBanner: unref(isUseBanner),
+        components: unref(components),
       };
+
       const headers = {
         Accept: "application/json",
         "Content-Type": "application/json",
       };
 
-      console.log(data);
-
       if (data.globalName) {
         await axios
           .post("http://localhost:3000", JSON.stringify(data), { headers })
           .then((response) => {
-            console.log(response);
-            // alert(response.message);
+            alert(response.data.message);
           })
           .catch((err) => {
-            console.log(err);
-            // alert(err.message);
+            alert(err.data.message);
           });
       } else {
         alert("Enter project name!");
@@ -171,10 +160,11 @@ export default {
     };
 
     return {
-      form,
-      componentFields,
+      globalName,
+      isUseBanner,
+      components,
+      componentOptions,
       updateCheckboxes,
-      componentFieldOptions,
       addComponentField,
       generateProject,
     };
