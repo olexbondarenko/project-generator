@@ -1,0 +1,53 @@
+<template>
+    <ul
+        class="<%= className %>"
+        :class="listClasses"
+    >
+        <li
+            v-for="(ticket, index) in tickets"
+            :key="`<%= className %>__item-${index}`"
+            :class="ticketClasses(ticket)"
+            class="<%= className %>__item"
+        >
+            {{ ticket.number }}
+        </li>
+    </ul>
+</template>
+
+<script>
+    import {
+        defineComponent, computed, toRefs, unref,
+    } from '@nuxtjs/composition-api';
+
+    export default defineComponent({
+        name: '<%= componentName %>',
+        props: {
+            type: {
+                type: String,
+                default: undefined,
+            },
+            tickets: {
+                type: Array,
+                default: () => [],
+            },
+        },
+        setup(props) {
+            const {type} = toRefs(props);
+
+            const listClasses = computed(() => ({
+                [`<%= className %>--${unref(type)}`]: Boolean(unref(type)),
+            }));
+
+            const ticketClasses = (ticket) => (ticket.isWin ? '<%= className %>__item--win' : '');
+
+            return {
+                listClasses,
+                ticketClasses,
+            };
+        },
+    });
+</script>
+
+<style scoped lang="scss">
+@import 'components/promotions/<%= globalFolderName %>/components/styles/<%= folderName %>/component';
+</style>

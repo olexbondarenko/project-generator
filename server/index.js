@@ -96,78 +96,11 @@ const generateProject = async (req, res) => {
       await createEmptyFile(`${globalFolderPath}/styles/helpers/variables.scss`);
       await createEmptyFile(`${globalFolderPath}/styles/helpers/animations.scss`);
     }).catch((err) => {console.log(err)});
-
-
-    // create folder and files for banner component(is selected)
-    if(useBanner) {
-      await createDirectory(`${globalFolderPath}/components/banners/`).then(async () => {
-        await createFile(
-          `${globalFolderPath}/components/banners/${upperCaseFirstLetter(toCamelCase(`${globalName} banner`))}.vue`, 
-          `${__dirname}/templates/views/banner.ejs`, 
-          {
-            globalFolderName: globalName,
-            componentName: upperCaseFirstLetter(toCamelCase(`${globalName} banner`)),
-            className:  `${globalClassName}-banner`
-          }
-        );
-      }).catch((err) => {console.log(err)});
-    
-      await createDirectory(`${globalFolderPath}/components/banners/styles`).then(async () => {
-        await createFile(
-          `${globalFolderPath}/components/banners/styles/${globalClassName}-banner.scss`, 
-          `${__dirname}/templates/styles/default.ejs`, 
-          {
-            className: `${globalClassName}-banner`
-          }
-        );
-  
-        await createFile(
-          `${globalFolderPath}/components/banners/styles/component.scss`, 
-          `${__dirname}/templates/styles/component.ejs`, 
-          {
-            fileName: `${globalStylesName}-banner`
-          }
-        ).catch((err) => {console.log(err)});
-      }).catch((err) => {console.log(err)});
-    }
   
     // create components directories
     for(let i = 0; i < components.length; i++) {
       let componentName = components[i].field.value;
       let templateName = components[i].options.filter((option) => option.checked === true)[0].template;
-
-      // create componetns with default template
-      if(templateName === 'default' || templateName === 'mainModal') {
-        await createFile(
-          `${globalFolderPath}/components/${upperCaseFirstLetter(toCamelCase(`${globalName} ${componentName}`))}.vue`, 
-          `${__dirname}/templates/views/${templateName === 'mainModal' ? 'mainModal' : 'default'}.ejs`, 
-          {
-            globalFolderName: globalName,
-            folderName: toCamelCase(`${globalName} ${componentName}`),
-            componentName: upperCaseFirstLetter(toCamelCase(`${globalName} ${componentName}`)),
-            className:  `${toKebablCase(`${globalStylesName} ${componentName}`)}`
-          }
-        ).catch((err) => {console.log(err)});
-    
-        // create style files
-        await createDirectory(`${globalFolderPath}/components/styles/${toCamelCase(`${globalName} ${componentName}`)}`).catch((err) => {console.log(err)});
-    
-        await createFile(
-          `${globalFolderPath}/components/styles/${toCamelCase(`${globalName} ${componentName}`)}/${toKebablCase(`${globalStylesName} ${componentName}`)}.scss`, 
-          `${__dirname}/templates/styles/default.ejs`, 
-          {
-            className: `${toKebablCase(`${globalStylesName} ${componentName}`)}`
-          }
-        ).catch((err) => {console.log(err)});
-        
-        await createFile(
-          `${globalFolderPath}/components/styles/${toCamelCase(`${globalName} ${componentName}`)}/component.scss`, 
-          `${__dirname}/templates/styles/component.ejs`, 
-          {
-            fileName: `${toKebablCase(`${globalStylesName} ${componentName}`)}`
-          }
-        ).catch((err) => {console.log(err)});
-      }
 
       // create default modal template and default file styles
       if(templateName === 'defaultModal') {
@@ -207,6 +140,71 @@ const generateProject = async (req, res) => {
           ).catch((err) => {console.log(err)});
         }).catch((err) => {console.log(err)});
       }
+      else {
+        // create componetns with default template
+        await createFile(
+          `${globalFolderPath}/components/${upperCaseFirstLetter(toCamelCase(`${globalName} ${componentName}`))}.vue`, 
+          `${__dirname}/templates/views/${templateName}.ejs`, 
+          {
+            globalFolderName: globalName,
+            folderName: toCamelCase(`${globalName} ${componentName}`),
+            componentName: upperCaseFirstLetter(toCamelCase(`${globalName} ${componentName}`)),
+            className:  `${toKebablCase(`${globalStylesName} ${componentName}`)}`
+          }
+        ).catch((err) => {console.log(err)});
+    
+        // create style files
+        await createDirectory(`${globalFolderPath}/components/styles/${toCamelCase(`${globalName} ${componentName}`)}`).catch((err) => {console.log(err)});
+    
+        await createFile(
+          `${globalFolderPath}/components/styles/${toCamelCase(`${globalName} ${componentName}`)}/${toKebablCase(`${globalStylesName} ${componentName}`)}.scss`, 
+          `${__dirname}/templates/styles/default.ejs`, 
+          {
+            className: `${toKebablCase(`${globalStylesName} ${componentName}`)}`
+          }
+        ).catch((err) => {console.log(err)});
+        
+        await createFile(
+          `${globalFolderPath}/components/styles/${toCamelCase(`${globalName} ${componentName}`)}/component.scss`, 
+          `${__dirname}/templates/styles/component.ejs`, 
+          {
+            fileName: `${toKebablCase(`${globalStylesName} ${componentName}`)}`
+          }
+        ).catch((err) => {console.log(err)});
+      }
+    }
+
+    // create folder and files for banner component(is selected)
+    if(useBanner) {
+      await createDirectory(`${globalFolderPath}/components/banners/`).then(async () => {
+        await createFile(
+          `${globalFolderPath}/components/banners/${upperCaseFirstLetter(toCamelCase(`${globalName} banner`))}.vue`, 
+          `${__dirname}/templates/views/banner.ejs`, 
+          {
+            globalFolderName: globalName,
+            componentName: upperCaseFirstLetter(toCamelCase(`${globalName} banner`)),
+            className:  `${globalClassName}-banner`
+          }
+        );
+      }).catch((err) => {console.log(err)});
+    
+      await createDirectory(`${globalFolderPath}/components/banners/styles`).then(async () => {
+        await createFile(
+          `${globalFolderPath}/components/banners/styles/${globalClassName}-banner.scss`, 
+          `${__dirname}/templates/styles/default.ejs`, 
+          {
+            className: `${globalClassName}-banner`
+          }
+        );
+  
+        await createFile(
+          `${globalFolderPath}/components/banners/styles/component.scss`, 
+          `${__dirname}/templates/styles/component.ejs`, 
+          {
+            fileName: `${globalStylesName}-banner`
+          }
+        ).catch((err) => {console.log(err)});
+      }).catch((err) => {console.log(err)});
     }
 
     // create breadcrumbs list constant

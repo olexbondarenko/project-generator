@@ -16,7 +16,7 @@
           <input
             id="use-banner"
             type="checkbox"
-            :checked="isUseBanner"
+            v-model="isUseBanner"
             class="form-fieldset-group-item__checkbox form-checkbox"
           />
           <label for="use-banner" class="form-fieldset-group-item__label">
@@ -40,15 +40,22 @@
         >
           <div
             :id="`form-field-${groupIdx}`"
-            class="form-fieldset-fields__item"
+            class="form-fieldset-fields__item form-fieldset-fields-item"
           >
             <input
               v-model="group.field.value"
               type="text"
-              placeholder="Component Name"
+              placeholder="Component name"
               autocomplete="off"
               class="form-field"
             />
+            <div
+              @click="removeComponentField(groupIdx)"
+              class="form-fieldset-fields-item__remove"
+              title="Remove Field"
+            >
+              &times;
+            </div>
           </div>
           <div
             class="form-fieldset-fields__options form-fieldset-fields-options"
@@ -74,12 +81,20 @@
         </div>
       </div>
 
-      <button @click="addComponentField" class="form-button" type="button">
-        Add Component
+      <button
+        @click="addComponentField"
+        class="form-button form-button--size-small form-button--theme-green"
+        type="button"
+      >
+        +
       </button>
     </fieldset>
 
-    <button @click.prevent="generateProject" class="form-button">
+    <button
+      @click.prevent="generateProject"
+      :disabled="isDisabledGenerationButton"
+      class="form-button form-button--size-medium form-button--theme-black"
+    >
       Generate Project
     </button>
   </form>
@@ -92,28 +107,34 @@ export default {
   name: "GenerationForm",
   setup() {
     const axios = inject("axios");
+    const isDisabledGenerationButton = ref(false);
     const globalName = ref("");
     const isUseBanner = ref(false);
     const components = ref([]);
     const componentOptions = [
       {
         template: "default",
-        label: "Default Template",
+        label: "Default",
         checked: true,
       },
       {
         template: "button",
-        label: "Button Template",
+        label: "Button",
+        checked: false,
+      },
+      {
+        template: "ticketsList",
+        label: "Tickets List",
         checked: false,
       },
       {
         template: "mainModal",
-        label: "Main Modal Template",
+        label: "Main Modal",
         checked: false,
       },
       {
         template: "defaultModal",
-        label: "Default Modal Template",
+        label: "Default Modal",
         checked: false,
       },
     ];
@@ -123,6 +144,10 @@ export default {
         field: { value: "" },
         options: JSON.parse(JSON.stringify([...componentOptions])),
       });
+    };
+
+    const removeComponentField = (index) => {
+      unref(components).splice(index, 1);
     };
 
     const updateCheckboxes = (options, index) => {
@@ -145,14 +170,18 @@ export default {
         "Content-Type": "application/json",
       };
 
+      isDisabledGenerationButton.value = true;
+
       if (data.globalName) {
         await axios
           .post("http://localhost:3000", JSON.stringify(data), { headers })
           .then((response) => {
             alert(response.data.message);
+            isDisabledGenerationButton.value = false;
           })
           .catch((err) => {
-            alert(err.data.message);
+            alert(err.message);
+            isDisabledGenerationButton.value = false;
           });
       } else {
         alert("Enter project name!");
@@ -160,12 +189,14 @@ export default {
     };
 
     return {
+      isDisabledGenerationButton,
       globalName,
       isUseBanner,
       components,
       componentOptions,
       updateCheckboxes,
       addComponentField,
+      removeComponentField,
       generateProject,
     };
   },
